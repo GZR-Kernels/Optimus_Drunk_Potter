@@ -396,12 +396,10 @@ static ssize_t kcal_enable_store(struct device *dev,
 
 	lut_data->enable = kcal_enable;
 
-	if (mdss_mdp_kcal_is_panel_on()) {
-		mdss_mdp_kcal_update_pcc(lut_data);
-		mdss_mdp_kcal_update_pa(lut_data);
-		mdss_mdp_kcal_update_igc(lut_data);
-	} else
-		lut_data->queue_changes = true;
+	mdss_mdp_kcal_update_pcc(lut_data);
+	mdss_mdp_kcal_update_pa(lut_data);
+	//mdss_mdp_kcal_update_igc(lut_data);
+	mdss_mdp_kcal_display_commit();
 
 	return count;
 }
@@ -425,12 +423,11 @@ static ssize_t kcal_invert_store(struct device *dev,
 		(lut_data->invert == kcal_invert))
 		return -EINVAL;
 
-	lut_data->invert = kcal_invert;
+	//disable
+	lut_data->invert = 0;
 
-	if (mdss_mdp_kcal_is_panel_on())
-		mdss_mdp_kcal_update_igc(lut_data);
-	else
-		lut_data->queue_changes = true;
+	//mdss_mdp_kcal_update_igc(lut_data);
+	//mdss_mdp_kcal_display_commit();
 
 	return count;
 }
