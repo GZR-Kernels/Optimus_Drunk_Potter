@@ -343,7 +343,8 @@ static __ref int do_sampling(void *data)
 		if (!poll_ms)
 			goto unlock;
 
-		schedule_delayed_work(&sampling_work,
+		queue_delayed_work(system_power_efficient_wq,
+			&sampling_work,
 			msecs_to_jiffies(poll_ms));
 unlock:
 		mutex_unlock(&kthread_update_mutex);
@@ -1113,7 +1114,9 @@ static int msm_core_dev_probe(struct platform_device *pdev)
 		set_threshold(&activity[cpu]);
 
 	INIT_DEFERRABLE_WORK(&sampling_work, samplequeue_handle);
-	schedule_delayed_work(&sampling_work, msecs_to_jiffies(0));
+	queue_delayed_work(system_power_efficient_wq,
+		&sampling_work,
+		msecs_to_jiffies(0));
 	pm_notifier(system_suspend_handler, 0);
 #endif
 	cpufreq_register_notifier(&cpu_policy, CPUFREQ_POLICY_NOTIFIER);
