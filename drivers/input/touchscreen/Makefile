@@ -104,3 +104,4 @@ obj-$(CONFIG_TOUCHSCREEN_HIMAX_I2C) 	+= himax_mmi/
 obj-$(CONFIG_TOUCHSCREEN_NT36xxx)		+= nova_mmi/
 obj-$(CONFIG_TOUCHSCREEN_ILITEK)	+= mstar/
 obj-$(CONFIG_TOUCHSCREEN_ILITEK_CHIPSET) += ilitek_mmi/
+obj-$(CONFIG_WAKE_GESTURES)		+= wake_gestures.o

@@ -1299,9 +1299,13 @@ config TOUCHSCREEN_HIMAX_CHIPSET
 
 source "drivers/input/touchscreen/hxchipset/Kconfig"
 
+
 source "drivers/input/touchscreen/gt9xx_mmi/Kconfig"
 source "drivers/input/touchscreen/himax_mmi/Kconfig"
 source "drivers/input/touchscreen/nova_mmi/Kconfig"
 source "drivers/input/touchscreen/ilitek_mmi/Kconfig"
+
+config WAKE_GESTURES
+	bool "wake gestures"
 
 endif
