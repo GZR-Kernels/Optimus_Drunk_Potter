@@ -160,6 +160,10 @@ struct cpufreq_interactive_tunables {
 
 	/* Whether to enable prediction or not */
 	bool enable_prediction;
+
+	/* Maximum frequency while the screen is off */
+#define DEFAULT_SCREEN_OFF_MAX 1286400
+	unsigned long screen_off_max;
 };
 
 /* For cases where we have single governor instance for system */
@@ -1401,6 +1405,32 @@ static ssize_t store_use_migration_notif(
 	return count;
 }
 
+static ssize_t show_screen_off_maxfreq(
+		struct cpufreq_interactive_tunables *tunables,
+                char *buf)
+{
+	return sprintf(buf, "%lu\n", tunables->screen_off_max);
+}
+
+static ssize_t store_screen_off_maxfreq(
+		struct cpufreq_interactive_tunables *tunables,
+                const char *buf, size_t count)
+{
+	int ret;
+	unsigned long val;
+
+	ret = kstrtoul(buf, 0, &val);
+	if (ret < 0)
+		return ret;
+
+	if (val < 384000)
+		tunables->screen_off_max = DEFAULT_SCREEN_OFF_MAX;
+	else
+		tunables->screen_off_max = val;
+
+	return count;
+}
+
 /*
  * Create show/store routines
  * - sys: One governor instance for complete SYSTEM
@@ -1455,6 +1485,7 @@ show_store_gov_pol_sys(align_windows);
 show_store_gov_pol_sys(ignore_hispeed_on_notif);
 show_store_gov_pol_sys(fast_ramp_down);
 show_store_gov_pol_sys(enable_prediction);
+show_store_gov_pol_sys(screen_off_maxfreq);
 
 #define gov_sys_attr_rw(_name)						\
 static struct global_attr _name##_gov_sys =				\
@@ -1485,6 +1516,7 @@ gov_sys_pol_attr_rw(align_windows);
 gov_sys_pol_attr_rw(ignore_hispeed_on_notif);
 gov_sys_pol_attr_rw(fast_ramp_down);
 gov_sys_pol_attr_rw(enable_prediction);
+gov_sys_pol_attr_rw(screen_off_maxfreq);
 
 static struct global_attr boostpulse_gov_sys =
 	__ATTR(boostpulse, 0200, NULL, store_boostpulse_gov_sys);
@@ -1512,6 +1544,7 @@ static struct attribute *interactive_attributes_gov_sys[] = {
 	&ignore_hispeed_on_notif_gov_sys.attr,
 	&fast_ramp_down_gov_sys.attr,
 	&enable_prediction_gov_sys.attr,
+	&screen_off_maxfreq_gov_sys.attr,
 	NULL,
 };
 
@@ -1540,6 +1573,7 @@ static struct attribute *interactive_attributes_gov_pol[] = {
 	&ignore_hispeed_on_notif_gov_pol.attr,
 	&fast_ramp_down_gov_pol.attr,
 	&enable_prediction_gov_pol.attr,
+	&screen_off_maxfreq_gov_pol.attr,
 	NULL,
 };
 
@@ -1579,6 +1613,7 @@ static struct cpufreq_interactive_tunables *alloc_tunable(
 	tunables->timer_rate = usecs_to_jiffies(DEFAULT_TIMER_RATE);
 	tunables->boostpulse_duration_val = DEFAULT_MIN_SAMPLE_TIME;
 	tunables->timer_slack_val = usecs_to_jiffies(DEFAULT_TIMER_SLACK);
+        tunables->screen_off_max = DEFAULT_SCREEN_OFF_MAX;
 
 	spin_lock_init(&tunables->target_loads_lock);
 	spin_lock_init(&tunables->above_hispeed_delay_lock);
