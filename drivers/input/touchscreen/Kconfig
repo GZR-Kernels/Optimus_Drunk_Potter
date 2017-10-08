@@ -1305,7 +1305,7 @@ source "drivers/input/touchscreen/himax_mmi/Kconfig"
 source "drivers/input/touchscreen/nova_mmi/Kconfig"
 source "drivers/input/touchscreen/ilitek_mmi/Kconfig"
 
-config WAKE_GESTURES
-	bool "wake gestures"
+config SCREEN_OFF_GESTURES
+	bool "screen off gestures"
 
 endif
