@@ -6,7 +6,7 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 
 ## Copy this script inside the kernel directory
 KERNEL_DIR=$PWD
-KERNEL_TOOLCHAIN=/home/gtrcraft/data/validus/prebuilts/gcc/$linux-x86/aarch64/aarch64-linux-android-4.9/bin
+KERNEL_TOOLCHAIN=/home/gtrcraft/data/validus/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 KERNEL_DEFCONFIG=potter_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=16
