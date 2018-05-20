@@ -48,10 +48,6 @@
 #define MSM_EEPROM_MEMORY_MAP_MAX_SIZE  100
 #define MSM_EEPROM_MAX_MEM_MAP_CNT      8
 
-#ifdef CONFIG_MSMB_CAMERA_2017
-#define MSM_SENSOR_BYPASS_VIDEO_NODE    1
-#endif
-
 enum msm_sensor_camera_id_t {
 	CAMERA_0,
 	CAMERA_1,
@@ -260,7 +256,6 @@ enum msm_camera_i2c_operation {
 	MSM_CAM_POLL,
 	MSM_CAM_READ,
 	MSM_CAM_POLL_STRICT,
-	MSM_CAM_READ_LOOP,
 };
 
 struct msm_sensor_i2c_sync_params {
@@ -325,9 +320,6 @@ struct msm_camera_sensor_slave_info {
 	unsigned char  is_init_params_valid;
 	struct msm_sensor_init_params sensor_init_params;
 	enum msm_sensor_output_format_t output_format;
-#ifdef CONFIG_MSMB_CAMERA_2017
-	uint8_t bypass_video_node_creation;
-#endif
 };
 
 struct msm_camera_i2c_reg_array {
