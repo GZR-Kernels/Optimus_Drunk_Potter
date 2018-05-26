@@ -108,8 +108,6 @@ bool scr_suspended(void)
 static int folio_notifier_callback(struct notifier_block *self,
 				 unsigned long event, void *data);
 #endif
-static int fps_notifier_callback(struct notifier_block *self,
-				 unsigned long event, void *data);
 
 static void synaptics_dsx_resumeinfo_start(
 		struct synaptics_rmi4_data *rmi4_data);
@@ -6674,23 +6672,6 @@ static void synaptics_rmi4_detection_work(struct work_struct *work)
 		return;
 	}
 
-	if (rmi4_data->fps_detection_enabled &&
-		!rmi4_data->is_fps_registered) {
-		error = FPS_register_notifier(
-				&rmi4_data->fps_notif, 0xBEEF, false);
-		if (error) {
-			if (exp_fn_ctrl.det_workqueue)
-				queue_delayed_work(
-					exp_fn_ctrl.det_workqueue,
-					&exp_fn_ctrl.det_work,
-					msecs_to_jiffies(EXP_FN_DET_INTERVAL));
-			pr_err("Failed to register fps_notifier\n");
-		} else {
-			rmi4_data->is_fps_registered = true;
-			pr_debug("registered FPS notifier\n");
-		}
-	}
-
 	mutex_lock(&exp_fn_ctrl.list_mutex);
 	if (list_empty(&exp_fn_ctrl.fn_list))
 		goto release_mutex;
@@ -7448,24 +7429,6 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
 	if (rmi4_data->charger_detection_enabled)
 		ps_notifier_register(rmi4_data);
 
-	if (rmi4_data->fps_detection_enabled) {
-		rmi4_data->fps_notif.notifier_call = fps_notifier_callback;
-		dev_dbg(&client->dev, "registering FPS notifier\n");
-		retval = FPS_register_notifier(
-				&rmi4_data->fps_notif, 0xBEEF, false);
-		if (retval) {
-			if (exp_fn_ctrl.det_workqueue)
-				queue_delayed_work(exp_fn_ctrl.det_workqueue,
-					&exp_fn_ctrl.det_work,
-					msecs_to_jiffies(EXP_FN_DET_INTERVAL));
-			dev_err(&client->dev,
-				"Failed to register fps_notifier: %d\n",
-				retval);
-			retval = 0;
-		} else
-			rmi4_data->is_fps_registered = true;
-	}
-
 	synaptics_dsx_pm_qos(rmi4_data, PM_ADD);
 
 	return retval;
@@ -7579,49 +7542,8 @@ static int synaptics_rmi4_remove(struct i2c_client *client)
 #endif
 	if (rmi4_data->charger_detection_enabled)
 		ps_notifier_unregister(rmi4_data);
-	if (rmi4_data->is_fps_registered)
-		FPS_unregister_notifier(&rmi4_data->fps_notif, 0xBEEF);
 
 	kfree(rmi4_data);
-	return 0;
-}
-
-static int fps_notifier_callback(struct notifier_block *self,
-				 unsigned long event, void *data)
-{
-	int state, fps_state = *(int *)data;
-	struct synaptics_rmi4_data *rmi4_data =
-		container_of(self, struct synaptics_rmi4_data, fps_notif);
-
-	if (rmi4_data && event == 0xBEEF &&
-			rmi4_data && rmi4_data->i2c_client) {
-		struct config_modifier *cm =
-			modifier_by_id(rmi4_data, SYNA_MOD_FPS);
-		if (!cm) {
-			dev_err(&rmi4_data->i2c_client->dev,
-				"No FPS modifier found\n");
-			goto done;
-		}
-
-		state = synaptics_dsx_get_state_safe(rmi4_data);
-		dev_dbg(&rmi4_data->i2c_client->dev,
-			"FPS: %s(%d), suspend flag: %d, BL flag: %d\n",
-			synaptics_dsx_state_name(state), state,
-			atomic_read(&rmi4_data->touch_stopped),
-			rmi4_data->in_bootloader);
-		if (fps_state) {/* on */
-			rmi4_data->clipping_on = true;
-			rmi4_data->clipa = cm->clipa;
-			cm->effective = true;
-		} else {/* off */
-			rmi4_data->clipping_on = false;
-			rmi4_data->clipa = NULL;
-			cm->effective = false;
-		}
-		pr_info("FPS: clipping is %s\n",
-			rmi4_data->clipping_on ? "ON" : "OFF");
-	}
-done:
 	return 0;
 }
 

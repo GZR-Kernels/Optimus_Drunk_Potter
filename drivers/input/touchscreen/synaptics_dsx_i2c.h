@@ -709,11 +709,6 @@ static inline int synaptics_rmi4_reg_write(
 	return rmi4_data->i2c_write(rmi4_data, addr, data, len);
 }
 
-extern int FPS_register_notifier(struct notifier_block *nb,
-				unsigned long stype, bool report);
-extern int FPS_unregister_notifier(struct notifier_block *nb,
-				unsigned long stype);
-
 #if defined(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_TEST_REPORTING)
 int synaptics_rmi4_scan_f54_ctrl_reg_info(
 	struct synaptics_rmi4_func_packet_regs *regs);
