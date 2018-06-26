@@ -1058,5 +1058,5 @@ static void __exit hbtp_exit(void)
 MODULE_DESCRIPTION("Kernel driver to support host based touch processing");
 MODULE_LICENSE("GPLv2");
 
-module_init(hbtp_init);
+late_initcall(hbtp_init);
 module_exit(hbtp_exit);
