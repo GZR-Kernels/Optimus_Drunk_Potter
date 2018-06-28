@@ -461,8 +461,14 @@ static int hbtp_input_report_events(struct hbtp_data *hbtp_data,
 
 			if (tch->active) {
 				input_report_abs(hbtp_data->input_dev,
-						ABS_MT_TOOL_TYPE,
-						tch->tool);
+						ABS_MT_POSITION_X,
+						tch->x);
+				input_report_abs(hbtp_data->input_dev,
+						ABS_MT_POSITION_Y,
+						tch->y);
+				input_report_abs(hbtp_data->input_dev,
+						ABS_MT_PRESSURE,
+						tch->pressure);
 				input_report_abs(hbtp_data->input_dev,
 						ABS_MT_TOUCH_MAJOR,
 						tch->major);
@@ -472,35 +478,6 @@ static int hbtp_input_report_events(struct hbtp_data *hbtp_data,
 				input_report_abs(hbtp_data->input_dev,
 						ABS_MT_ORIENTATION,
 						tch->orientation);
-				input_report_abs(hbtp_data->input_dev,
-						ABS_MT_PRESSURE,
-						tch->pressure);
-				/*
-				 * Scale up/down the X-coordinate as per
-				 * DT property
-				 */
-				if (hbtp_data->use_scaling &&
-						hbtp_data->def_maxx > 0 &&
-						hbtp_data->des_maxx > 0)
-					tch->x = (tch->x * hbtp_data->des_maxx)
-							/ hbtp_data->def_maxx;
-
-				input_report_abs(hbtp_data->input_dev,
-						ABS_MT_POSITION_X,
-						tch->x);
-				/*
-				 * Scale up/down the Y-coordinate as per
-				 * DT property
-				 */
-				if (hbtp_data->use_scaling &&
-						hbtp_data->def_maxy > 0 &&
-						hbtp_data->des_maxy > 0)
-					tch->y = (tch->y * hbtp_data->des_maxy)
-							/ hbtp_data->def_maxy;
-
-				input_report_abs(hbtp_data->input_dev,
-						ABS_MT_POSITION_Y,
-						tch->y);
 			}
 			hbtp_data->touch_status[i] = tch->active;
 		}
