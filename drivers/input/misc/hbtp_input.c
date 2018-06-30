@@ -467,7 +467,7 @@ static int hbtp_input_report_events(struct hbtp_data *hbtp_data,
 			* Cut the loop if coordinates or
 			* pressure are clearly broken/invalid
 			*/
-			if (tch->x <= 0 || tch->y <= 0 || tch->pressure <= 0)
+			if (tch->x < 0 || tch->y < 0 || tch->pressure <= 0)
 				continue;
 			if (tch->active) {
 				input_report_abs(hbtp_data->input_dev,
