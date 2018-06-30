@@ -463,7 +463,12 @@ static int hbtp_input_report_events(struct hbtp_data *hbtp_data,
 			input_mt_slot(hbtp_data->input_dev, i);
 			input_mt_report_slot_state(hbtp_data->input_dev,
 					MT_TOOL_FINGER, tch->active);
-
+			/*
+			* Cut the loop if coordinates or
+			* pressure are clearly broken/invalid
+			*/
+			if (tch->x <= 0 || tch->y <= 0 || tch->pressure <= 0)
+				continue;
 			if (tch->active) {
 				input_report_abs(hbtp_data->input_dev,
 						ABS_MT_POSITION_X,
