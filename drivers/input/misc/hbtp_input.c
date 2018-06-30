@@ -42,7 +42,7 @@ struct hbtp_data {
 	struct input_dev *input_dev;
 	s32 count;
 	struct mutex mutex;
-	bool touch_status[HBTP_MAX_FINGER];
+	bool touch_status[HBTP_MAX_FINGER / 2];
 #if defined(CONFIG_FB)
 	struct notifier_block fb_notif;
 #endif
@@ -412,7 +412,7 @@ static int hbtp_input_create_input_dev(struct hbtp_input_absinfo *absinfo)
 		__set_bit(i, input_dev->keybit);
 
 	/* For multi touch */
-	input_mt_init_slots(input_dev, HBTP_MAX_FINGER, 0);
+	input_mt_init_slots(input_dev, HBTP_MAX_FINGER / 2, 0);
 	for (i = 0; i <= ABS_MT_LAST - ABS_MT_FIRST; i++) {
 		abs = absinfo + i;
 		if (abs->active) {
@@ -452,8 +452,13 @@ static int hbtp_input_report_events(struct hbtp_data *hbtp_data,
 	int i;
 	struct hbtp_input_touch *tch;
 
-	for (i = 0; i < HBTP_MAX_FINGER; i++) {
+	/*
+	* Why bother reporting 20 touches every time
+	* if we only support 10?
+	*/
+	for (i = 0; i < HBTP_MAX_FINGER / 2; i++) {
 		tch = &(mt_data->touches[i]);
+
 		if (tch->active || hbtp_data->touch_status[i]) {
 			input_mt_slot(hbtp_data->input_dev, i);
 			input_mt_report_slot_state(hbtp_data->input_dev,
