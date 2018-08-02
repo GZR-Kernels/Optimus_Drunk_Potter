@@ -73,6 +73,7 @@ rm -rf arch/arm64/boot/dtb
 rm -rf $ANY_KERNEL2_DIR/$FINAL_KERNEL_ZIP
 rm -rf AnyKernel2/Image.gz
 rm -rf AnyKernel2/dtb
+rm -rf $KERNEL_DIR/out/
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
