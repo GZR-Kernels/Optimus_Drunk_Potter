@@ -1247,7 +1247,7 @@ config TOUCHSCREEN_HIMAX_CHIPSET
 	  HIMAX controllers are multi touch controllers which can
 	  report 10 touches at a time.
 
-	  If unsure, say N.
+          If unsure, say N.
 
 config TOUCHSCREEN_NT36xxx
        bool "Novatek NT36xxx"
