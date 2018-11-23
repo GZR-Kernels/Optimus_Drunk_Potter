@@ -1950,7 +1950,7 @@ static int fwu_write_f34_v7_blocks(unsigned char *block_ptr,
 			return retval;
 		}
 
-		retval = fwu_wait_for_idle(WRITE_WAIT_MS, false);
+		retval = fwu_wait_for_idle(WRITE_WAIT_MS, true);
 		if (retval < 0) {
 			dev_err(rmi4_data->pdev->dev.parent,
 					"%s: Failed to wait for idle status (%d blocks remaining)\n",
@@ -1960,6 +1960,8 @@ static int fwu_write_f34_v7_blocks(unsigned char *block_ptr,
 
 		block_ptr += (transfer * fwu->block_size);
 		remaining -= transfer;
+		dev_dbg(rmi4_data->pdev->dev.parent, "%s: remaining %d\n",
+					__func__, remaining);
 	} while (remaining);
 
 	return 0;
@@ -2009,7 +2011,7 @@ static int fwu_write_f34_v5v6_blocks(unsigned char *block_ptr,
 			return retval;
 		}
 
-		retval = fwu_wait_for_idle(WRITE_WAIT_MS, false);
+		retval = fwu_wait_for_idle(WRITE_WAIT_MS, true);
 		if (retval < 0) {
 			dev_err(rmi4_data->pdev->dev.parent,
 					"%s: Failed to wait for idle status (block %d)\n",
@@ -2018,6 +2020,8 @@ static int fwu_write_f34_v5v6_blocks(unsigned char *block_ptr,
 		}
 
 		block_ptr += fwu->block_size;
+		dev_dbg(rmi4_data->pdev->dev.parent, "%s: remaining %d\n",
+					__func__, block_cnt - blk);
 	}
 
 	return 0;
