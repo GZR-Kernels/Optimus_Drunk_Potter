@@ -10,7 +10,7 @@
 #include <linux/init.h>
 
 /* default tunable values */
-static const uint8_t max_writes_starved = 32; /* max amount of times reads can starve pending writes */
+static const unsigned int max_writes_starved = 8; /* max amount of times reads can starve pending writes */
 
 struct anxiety_data {
 	struct list_head queue[2];
@@ -28,8 +28,10 @@ static void anxiety_merged_requests(struct request_queue *q, struct request *rq,
 static __always_inline struct request *anxiety_choose_request(struct anxiety_data *mdata)
 {
 	/* prioritize reads unless writes are exceedingly starved */
-	if (mdata->writes_starved <= mdata->max_writes_starved && 
-			!list_empty(&mdata->queue[READ])) {
+	bool starved = mdata->writes_starved > mdata->max_writes_starved;
+
+	/* read */
+	if (!starved && !list_empty(&mdata->queue[READ])) {
 		mdata->writes_starved++;
 		return rq_entry_fifo(mdata->queue[READ].next);
 	}
@@ -40,7 +42,7 @@ static __always_inline struct request *anxiety_choose_request(struct anxiety_dat
 		return rq_entry_fifo(mdata->queue[WRITE].next);
 	}
 
-	/* all queues are empty; no pending requests */
+	/* all queues are empty, i.e. no pending requests */
 	mdata->writes_starved = 0;
 	return NULL;
 }
@@ -60,12 +62,16 @@ static int anxiety_dispatch(struct request_queue *q, int force)
 
 static void anxiety_add_request(struct request_queue *q, struct request *rq)
 {
-	list_add_tail(&rq->queuelist, &((struct anxiety_data *) q->elevator->elevator_data)->queue[rq_data_dir(rq)]);
+	const uint8_t dir = rq_data_dir(rq);
+
+	list_add_tail(&rq->queuelist, &((struct anxiety_data *) q->elevator->elevator_data)->queue[dir]);
 }
 
 static struct request *anxiety_former_request(struct request_queue *q, struct request *rq)
 {
-	if (rq->queuelist.prev == &((struct anxiety_data *) q->elevator->elevator_data)->queue[rq_data_dir(rq)])
+	const uint8_t dir = rq_data_dir(rq);
+
+	if (rq->queuelist.prev == &((struct anxiety_data *) q->elevator->elevator_data)->queue[dir])
 		return NULL;
 
 	return list_prev_entry(rq, queuelist);
@@ -73,16 +79,18 @@ static struct request *anxiety_former_request(struct request_queue *q, struct re
 
 static struct request *anxiety_latter_request(struct request_queue *q, struct request *rq)
 {
-	if (rq->queuelist.next == &((struct anxiety_data *) q->elevator->elevator_data)->queue[rq_data_dir(rq)])
+	const uint8_t dir = rq_data_dir(rq);
+
+	if (rq->queuelist.next == &((struct anxiety_data *) q->elevator->elevator_data)->queue[dir])
 		return NULL;
 
 	return list_next_entry(rq, queuelist);
 }
 
 static int anxiety_init_queue(struct request_queue *q, struct elevator_type *elv)
-{	
-	struct elevator_queue *eq = elevator_alloc(q, elv);
+{
 	struct anxiety_data *data;
+	struct elevator_queue *eq = elevator_alloc(q, elv);
 
 	if (!eq)
 		return -ENOMEM;
@@ -114,7 +122,7 @@ static ssize_t anxiety_max_writes_starved_show(struct elevator_queue *e, char *p
 {
 	struct anxiety_data *ad = e->elevator_data;
 
-	return snprintf(page, PAGE_SIZE, "%u\n", ad->max_writes_starved);
+	return snprintf(page, PAGE_SIZE, "%d\n", ad->max_writes_starved);
 }
 
 static ssize_t anxiety_max_writes_starved_store(struct elevator_queue *e, const char *page, size_t count)
