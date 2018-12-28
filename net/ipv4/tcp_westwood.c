@@ -43,8 +43,8 @@ struct westwood {
 };
 
 /* TCP Westwood functions and constants */
-int tcp_westwood_rtt_min = 38;
-int tcp_westwood_init_rtt = 800;
+int tcp_westwood_rtt_min = 50;
+int tcp_westwood_init_rtt = 1000;
 
 /* Let's make them tunable */
 module_param_named(rtt_min, tcp_westwood_rtt_min, int, 0644);
