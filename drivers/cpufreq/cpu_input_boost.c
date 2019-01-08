@@ -9,7 +9,14 @@
 #include <linux/cpufreq.h>
 #include <linux/fb.h>
 #include <linux/input.h>
+#include <linux/moduleparam.h>
 #include <linux/slab.h>
+
+static unsigned int input_boost_freq_lp = CONFIG_INPUT_BOOST_FREQ_LP;
+static unsigned short input_boost_duration = CONFIG_INPUT_BOOST_DURATION_MS;
+
+module_param(input_boost_freq_lp, uint, 0644);
+module_param(input_boost_duration, short, 0644);
 
 /* Available bits for boost_drv state */
 #define SCREEN_AWAKE		BIT(0)
@@ -117,7 +124,7 @@ static void input_boost_worker(struct work_struct *work)
 	}
 
 	queue_delayed_work(b->wq, &b->input_unboost,
-		msecs_to_jiffies(CONFIG_INPUT_BOOST_DURATION_MS));
+		msecs_to_jiffies(input_boost_duration));
 }
 
 static void input_unboost_worker(struct work_struct *work)
@@ -174,7 +181,7 @@ static int cpu_notifier_cb(struct notifier_block *nb,
 	 * unboosting, set policy->min to the absolute min freq for the CPU.
 	 */
 	if (state & INPUT_BOOST) {
-		policy->min = min(policy->max, (unsigned int)CONFIG_INPUT_BOOST_FREQ_LP);
+		policy->min = min(policy->max, (unsigned int)input_boost_freq_lp);
 	} else {
 		policy->min = policy->cpuinfo.min_freq;
 	}
