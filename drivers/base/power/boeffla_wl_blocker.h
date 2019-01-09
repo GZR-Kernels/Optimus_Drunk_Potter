@@ -16,8 +16,9 @@
 
 #define BOEFFLA_WL_BLOCKER_VERSION	"1.1.0"
 
-#define LIST_WL_DEFAULT			""
+#define LIST_WL_DEFAULT			"qcom_rx_wakelock;wlan;netmgr_wl;NETLINK;IPA_WS;pil-a506_zap;50028"
 
 #define LENGTH_LIST_WL			255
-#define LENGTH_LIST_WL_DEFAULT		100
+#define LENGTH_LIST_WL_DEFAULT		70
+
 #define LENGTH_LIST_WL_SEARCH		LENGTH_LIST_WL + LENGTH_LIST_WL_DEFAULT + 5
