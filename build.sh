@@ -12,7 +12,7 @@ KERNEL_DEFCONFIG=potter_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=16
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
-FINAL_KERNEL_ZIP=Optimus_Drunk_Potter-$DATE_POSTFIX-EAS.zip
+FINAL_KERNEL_ZIP=Optimus_Drunk_Potter-$DATE_POSTFIX-Treble.zip
 # Speed up build process
 MAKE="./makeparallel"
 
