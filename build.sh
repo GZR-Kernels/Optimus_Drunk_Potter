@@ -11,7 +11,7 @@ CLANG_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/clang-r353983e/bin/clang-9
 KERNEL_DEFCONFIG=potter_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 ANY_KERNEL3_DIR=$KERNEL_DIR/AnyKernel3/
-FINAL_KERNEL_ZIP=Optimus_Drunk_Potter-$DATE_POSTFIX-HMP.zip
+FINAL_KERNEL_ZIP=Optimus_Drunk_Potter-$DATE_POSTFIX-HMP-Treble.zip
 # Speed up build process
 MAKE="./makeparallel"
 
