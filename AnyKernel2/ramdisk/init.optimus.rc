@@ -27,6 +27,11 @@ on property:sys.boot_completed=1
     # LMK
     write /sys/module/lowmemorykiller/parameters/minfree "18432,23040,27648,32256,36864,46080"
 
+    # I/O Scheduler
+    setprop sys.io.scheduler anxiety
+    write /sys/block/mmcblk0/queue/scheduler anxiety
+    write /sys/block/mmcblk0rpmb/queue/scheduler anxiety
+
     # Adreno Idler
     write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 6000
     write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 18
