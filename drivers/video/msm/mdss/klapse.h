@@ -17,13 +17,14 @@ extern void set_rgb_slider(u32 bl_lvl);
  #define K_GREEN  kcal_get_color(1)
  #define K_BLUE   kcal_get_color(2)
 
- extern K_TYPE kcal_get_color(unsigned short int code);
+extern K_TYPE kcal_get_color(unsigned short int code);
+extern void klapse_kcal_push(int r, int g, int b);
 #else
  #define K_RED    kcal_red
  #define K_GREEN  kcal_green
  #define K_BLUE   kcal_blue
 
- extern K_TYPE K_RED, K_GREEN, K_BLUE;
+extern K_TYPE K_RED, K_GREEN, K_BLUE;
 #endif
 
 /* DEFAULT_ENABLE values :
