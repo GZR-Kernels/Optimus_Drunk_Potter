@@ -60,7 +60,6 @@
 #include <linux/atomic.h>
 #include <linux/binfmts.h>
 #include <linux/cpu_input_boost.h>
-#include <linux/devfreq_boost.h>
 
 
 /*
@@ -2431,11 +2430,9 @@ retry_find_task:
 	ret = cgroup_attach_task(cgrp, tsk, threadgroup);
 	/* This covers boosting for app launches and app transitions */
 	if (!ret && !threadgroup &&
-		!memcmp(of->kn->parent->name, "top-app", sizeof("top-app")) &&
-		is_zygote_pid(tsk->parent->pid)) {
-		cpu_input_boost_kick_max(100);
-		devfreq_boost_kick_max(DEVFREQ_MSM_CPUBW, 100);
-	}
+	    !strcmp(of->kn->parent->name, "top-app") &&
+	    is_zygote_pid(tsk->parent->pid))
+		cpu_input_boost_kick_max(1000);
 
 
 	threadgroup_unlock(tsk);
