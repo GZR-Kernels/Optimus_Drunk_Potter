@@ -32,10 +32,10 @@ struct vreg_config {
 	int ua_load;
 };
 
-static const struct vreg_config const vreg_conf[] = {
-	{ "vdd_ana", 1800000UL, 1800000UL, 6000, },
+static const struct vreg_config vreg_conf[] = {
+	{ "vdd_ana", 1800000UL, 1800000UL, 5000, },
 	{ "vcc_spi", 1800000UL, 1800000UL, 10, },
-	{ "vdd_io", 1800000UL, 1800000UL, 6000, },
+	{ "vdd_io", 1800000UL, 1800000UL, 5000, },
 };
 
 atomic_t fp_hal_pid;
@@ -57,7 +57,6 @@ struct fpc1020_data {
 	int clocks_suspended;
 
 	bool screen_off;
-
 	int irq_gpio;
 	int rst_gpio;
 };
@@ -300,7 +299,7 @@ static void fpc1020_suspend_resume(struct work_struct *work)
 
 	/* Escalate fingerprintd priority when screen is off */
 	if (f->screen_off) {
-		set_fingerprint_hal_nice(MIN_NICE);
+		set_fingerprint_hal_nice(-1);
 	} else {
 		set_fpc_irq(f, true);
 		set_fingerprint_hal_nice(0);
@@ -336,12 +335,10 @@ static irqreturn_t fpc1020_irq_handler(int irq, void *dev_id)
 {
 	struct fpc1020_data *f = dev_id;
 
-	if (f->screen_off){
-		pm_wakeup_event(f->dev, 1000);
-	}
+	if (f->screen_off)
+		pm_wakeup_event(f->dev, 2000);
 
 	sysfs_notify(&f->dev->kobj, NULL, dev_attr_irq.attr.name);
-
 	return IRQ_HANDLED;
 }
 
