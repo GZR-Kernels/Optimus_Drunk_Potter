@@ -23,6 +23,7 @@
 #include <linux/spi/spi.h>
 #include <linux/wakelock.h>
 #include <linux/notifier.h>
+#include <linux/fpc1020.h>
 
 struct vreg_config {
 	char *name;
@@ -36,6 +37,8 @@ static const struct vreg_config const vreg_conf[] = {
 	{ "vcc_spi", 1800000UL, 1800000UL, 10, },
 	{ "vdd_io", 1800000UL, 1800000UL, 6000, },
 };
+
+atomic_t fp_hal_pid;
 
 struct fpc1020_data {
 	struct clk *iface_clk;
@@ -275,11 +278,16 @@ static const struct attribute_group attribute_group = {
 static void set_fingerprint_hal_nice(int nice)
 {
 	struct task_struct *p;
+	int pid = atomic_read(&fp_hal_pid);
+	if(!pid) {
+		return;
+	}
 
 	read_lock(&tasklist_lock);
 	for_each_process(p) {
-		if(!memcmp(p->comm, "fps_work", 9)) {
+		if(p->pid == pid) {
 			set_user_nice(p, nice);
+			pr_debug("FP nice set!!");
 			break;
 		}
 	}
