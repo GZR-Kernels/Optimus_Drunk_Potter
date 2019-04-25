@@ -6,7 +6,7 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 
 ## Copy this script inside the kernel directory
 KERNEL_DIR=$PWD
-KERNEL_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+KERNEL_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/aarch64-linux-gnu/bin/aarch64-linux-gnu-
 CLANG_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/clang-r353983b/bin/clang-9
 KERNEL_DEFCONFIG=potter_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
@@ -38,7 +38,7 @@ echo -e "$blue***********************************************"
 echo "          BUILDING KERNEL          "
 echo -e "***********************************************$nocol"
 make $KERNEL_DEFCONFIG O=out
-make -j$JOBS CC=$CLANG_TOOLCHAIN CLANG_TRIPLE=aarch64-linux-android- O=out
+make -j$JOBS CC=$CLANG_TOOLCHAIN CLANG_TRIPLE=aarch64-linux-gnu- O=out
 
 echo -e "$blue***********************************************"
 echo "          GENERATING DT.img          "
