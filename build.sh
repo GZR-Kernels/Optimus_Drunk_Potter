@@ -7,7 +7,7 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 ## Copy this script inside the kernel directory
 KERNEL_DIR=$PWD
 KERNEL_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/aarch64-linux-gnu/bin/aarch64-linux-gnu-
-CLANG_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/clang-r353983b/bin/clang-9
+CLANG_TOOLCHAIN=$ANDROIDDIR/kernel/prebuilts/clang-r353983c/bin/clang-9
 KERNEL_DEFCONFIG=potter_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=16
@@ -27,7 +27,7 @@ echo "**** Setting Toolchain ****"
 export CROSS_COMPILE=$KERNEL_TOOLCHAIN
 export ARCH=arm64
 export SUBARCH=arm64
-export KBUILD_COMPILER_STRING="Clang Version 9.0.2"
+export KBUILD_COMPILER_STRING="Clang Version 9.0.3"
 
 # Clean build always lol
 echo "**** Cleaning ****"
