@@ -15,11 +15,11 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpufreq/schedutil/down_rate_limit_us 20000
     write /sys/devices/system/cpu/cpufreq/schedutil/iowait_boost_enable 0
 
-    write /sys/module/cpu_input_boost/parameters/dynamic_stune_boost 5
+    write /sys/module/cpu_input_boost/parameters/dynamic_stune_boost 3
 
     write /dev/stune/foreground/schedtune.prefer_idle 1
     write /dev/stune/top-app/schedtune.prefer_idle 1
-    write /dev/stune/top-app/schedtune.boost 1
+    write /dev/stune/top-app/schedtune.boost 0
 
     # TCP 
     write /proc/sys/net/ipv4/tcp_congestion_control westwood
