@@ -43,7 +43,7 @@ make -j$(nproc --all) CC=$CLANG_TOOLCHAIN CLANG_TRIPLE=aarch64-linux-gnu- O=out
 echo -e "$blue***********************************************"
 echo "          GENERATING DT.img          "
 echo -e "***********************************************$nocol"
-$DTBTOOL/dtbToolCM -2 -o $KERNEL_DIR/out/arch/arm64/boot/dtb -s 2048 -p $KERNEL_DIR/out/scripts/dtc/ $KERNEL_DIR/out/arch/arm64/boot/dts/qcom/
+$DTBTOOL/dtbToolOptimus -o $KERNEL_DIR/out/arch/arm64/boot/dtb -s 2048 -p $KERNEL_DIR/out/scripts/dtc/ $KERNEL_DIR/out/arch/arm64/boot/dts/qcom/
 
 echo "**** Verify Image.gz & dtb ****"
 ls $KERNEL_DIR/out/arch/arm64/boot/Image.gz
